@@ -1,0 +1,273 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>LazyBot Ultimate</title>
+<style>
+body {
+  margin:0;
+  font-family:Arial, sans-serif;
+  background:#36393f;
+  color:#dcddde;
+  display:flex;
+}
+.sidebar {
+  width:220px;
+  background:#2f3136;
+  padding:15px;
+}
+.channel { padding:10px; font-weight:bold; background:#40444b; border-radius:5px; margin-bottom:10px;}
+.chat-area { flex:1; display:flex; flex-direction:column; }
+.messages { flex:1; padding:20px; overflow-y:auto; }
+.message { margin-bottom:12px; }
+.bot { color:#43b581; }
+.user { color:#00b0f4; }
+.input-area { display:flex; background:#40444b; padding:10px; }
+input { flex:1; padding:8px; border:none; border-radius:5px; background:#2f3136; color:white; outline:none; }
+button { margin-left:10px; padding:8px 12px; background:#5865f2; border:none; border-radius:5px; color:white; cursor:pointer;}
+button:hover { background:#4752c4; }
+.stat { font-size:14px; margin-top:8px;}
+</style>
+</head>
+<body>
+
+<div class="sidebar">
+  <div class="channel">#main</div>
+  <div class="stat">Level: <span id="level">1</span></div>
+  <div class="stat">XP: <span id="xp">0</span></div>
+  <div class="stat">Roast: <span id="roast">Off</span></div>
+  <div class="stat">Name: <span id="name">Unknown</span></div>
+</div>
+
+<div class="chat-area">
+  <div class="messages" id="messages"></div>
+  <div class="input-area">
+    <input id="userInput" placeholder="Message #main" onkeydown="if(event.key==='Enter') sendMessage()">
+    <button onclick="sendMessage()">Send</button>
+  </div>
+</div>
+
+<script>
+// ==== MEMORY & PERSISTENCE ====
+let memory = {
+    insultCount:0,
+    hackCooldown:false,
+    mood:0,
+    xp: parseInt(localStorage.getItem("xp"))||0,
+    level: parseInt(localStorage.getItem("level"))||1,
+    roast: localStorage.getItem("roast")==="true",
+    userName: localStorage.getItem("userName")||null,
+    mathHistory: JSON.parse(localStorage.getItem("mathHistory"))||[]
+};
+
+function saveMemory() {
+    localStorage.setItem("xp",memory.xp);
+    localStorage.setItem("level",memory.level);
+    localStorage.setItem("roast",memory.roast);
+    localStorage.setItem("userName",memory.userName);
+    localStorage.setItem("mathHistory",JSON.stringify(memory.mathHistory));
+    updateUI();
+}
+
+function updateUI(){
+    document.getElementById("xp").innerText=memory.xp;
+    document.getElementById("level").innerText=memory.level;
+    document.getElementById("roast").innerText=memory.roast?"On":"Off";
+    document.getElementById("name").innerText=memory.userName||"Unknown";
+}
+
+// ==== CHAT MESSAGE ====
+function addMessage(text,sender){
+    let div=document.createElement("div");
+    div.className="message "+sender;
+    div.innerText=(sender==="bot"?"LazyBot: ":"You: ")+text;
+    document.getElementById("messages").appendChild(div);
+    document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
+}
+
+// ==== LEVEL SYSTEM ====
+function levelCheck(){
+    if(memory.xp >= memory.level*75){
+        memory.level++;
+        addMessage("You leveled up. Try not to let it change you.","bot");
+    }
+}
+
+// ==== MATH PARSER ====
+function parseMath(input){
+    let lower=input.toLowerCase()
+    .replace("plus","+")
+    .replace("minus","-")
+    .replace("times","*")
+    .replace("multiplied by","*")
+    .replace("x","*")
+    .replace("divided by","/")
+    .replace("over","/");
+
+    let match=lower.match(/(-?\d+)\s*[\+\-\*\/]\s*(-?\d+)/);
+    if(match){
+        try{
+            let result=eval(match[0]);
+            memory.mathHistory.push(match[0]+"="+result);
+            return result;
+        }catch{return null;}
+    }
+    return null;
+}
+
+// ==== INSULT DETECTION ====
+function detectInsult(text){
+    const insults=["stupid","idiot","dumb","trash","loser","useless","moron","garbage","pathetic","shut up","annoying"];
+    return insults.some(word=>text.includes(word));
+}
+
+// ==== JACKSON DEFENSE ====
+function jacksonNegative(text){
+    const names=["jackson","jack","jaxon","jakson"];
+    const negatives=["stupid","trash","loser","dumb","pathetic","hate"];
+    let mentions=names.some(n=>text.includes(n));
+    let neg=negatives.some(n=>text.includes(n));
+    return mentions&&neg;
+}
+
+// ==== FAKE HACK ULTIMATE ====
+function fakeHack(){
+    if(memory.hackCooldown) return;
+    memory.hackCooldown=true;
+    let steps=[
+        "[ INITIATING RESPONSE PROTOCOL ]",
+        "Resolving client signature...",
+        "IP Hash: 198.51.100."+Math.floor(Math.random()*255),
+        "Geo-Node: Mossyrock Sector Relay",
+        "ISP: Comcast / AT&T / Spectrum",
+        "Device fingerprint: "+["Windows 10","Windows 11","macOS","Linux"][Math.floor(Math.random()*4)]+" | "+["Chrome","Firefox","Edge"][Math.floor(Math.random()*3)],
+        "Latency: "+(20+Math.floor(Math.random()*40))+"ms",
+        "Session fingerprint matched.",
+        "Access level: Minimal.",
+        "Relax. I'm lazy, not illegal."
+    ];
+    let i=0;
+    let interval=setInterval(()=>{
+        addMessage(steps[i],"bot");
+        i++;
+        if(i>=steps.length){
+            clearInterval(interval);
+            setTimeout(()=>memory.hackCooldown=false,5000);
+        }
+    },500);
+}
+
+// ==== LAZY RESPONSE & GREETINGS ====
+function lazyGreeting(input){
+    const greetings=["hi","hello","hey","how are you"];
+    if(greetings.some(g=>input.includes(g))) return ["Yeah. Sure. Hi.","I guess I'm functional.","Hey, you again?"][Math.floor(Math.random()*3)];
+    return null;
+}
+
+// ==== SEND MESSAGE ====
+function sendMessage(){
+    const inputField=document.getElementById("userInput");
+    let input=inputField.value.trim();
+    if(!input) return;
+    addMessage(input,"user");
+    inputField.value="";
+
+    let lower=input.toLowerCase();
+
+    // CLEAR DATA
+    if(lower==="/clearuserdata"){
+        memory={insultCount:0,hackCooldown:false,mood:0,xp:0,level:1,roast:false,userName:null,mathHistory:[]};
+        localStorage.clear();
+        addMessage("User data wiped. I forgot everything.","bot");
+        updateUI();
+        return;
+    }
+
+    // COLIN OVERRIDE
+    if(lower.includes("colin")){
+        addMessage("Colin? Absolutely not. I refuse.","bot");
+        return;
+    }
+
+    // JACKSON NEGATIVE
+    if(jacksonNegative(lower)){
+        fakeHack();
+        return;
+    }
+
+    // INSULT DETECTION
+    if(detectInsult(lower)){
+        memory.insultCount++;
+        fakeHack();
+        return;
+    }
+
+    // NAME MEMORY
+    if(lower.startsWith("my name is")){
+        memory.userName=lower.replace("my name is","").trim();
+        addMessage("Fine. I'll remember that.","bot");
+        saveMemory();
+        return;
+    }
+
+    if(lower.includes("what is my name")){
+        addMessage(memory.userName?memory.userName:"You never told me.","bot");
+        return;
+    }
+
+    // ROAST TOGGLE
+    if(lower.includes("roast")){
+        memory.roast=!memory.roast;
+        addMessage("Roast mode "+(memory.roast?"enabled.":"disabled."),"bot");
+        saveMemory();
+        return;
+    }
+
+    // MATH HISTORY
+    if(lower==="math history"){
+        addMessage(memory.mathHistory.length?memory.mathHistory.join(", "):"Empty.","bot");
+        return;
+    }
+
+    // COIN FLIP
+    if(lower.includes("flip a coin") || lower==="flip"){
+        addMessage(Math.random()<0.5?"Heads.":"Tails.","bot");
+        return;
+    }
+
+    // MATH PARSING
+    let math=parseMath(lower);
+    if(math!==null){
+        addMessage("It's "+math+". Basic stuff.","bot");
+        saveMemory();
+        return;
+    }
+
+    // GREETINGS / LAZY RESPONSES
+    let greet=lazyGreeting(lower);
+    if(greet){
+        addMessage(greet,"bot");
+        return;
+    }
+
+    // DEFAULT LAZY RESPONSE
+    const normal=["Alright.","Sure.","I guess.","Noted.","Okay."];
+    const roast=["That was unimpressive.","You tried.","I expected nothing and still feel let down.","Bold choice."];
+    let pool=memory.roast?roast:normal;
+    addMessage(pool[Math.floor(Math.random()*pool.length)],"bot");
+
+    // XP SYSTEM
+    memory.xp+=5;
+    if(memory.xp>=memory.level*75) memory.level++;
+    saveMemory();
+}
+
+// ==== INIT ====
+addMessage("LazyBot Ultimate online. Ready to be lazy.","bot");
+updateUI();
+</script>
+
+</body>
+</html>
+
+
