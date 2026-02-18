@@ -48,7 +48,7 @@ button:hover { background:#4752c4; }
 </div>
 
 <script>
-// ==== MEMORY & PERSISTENCE ====
+//==== memoryv2 ====
 let memory = {
     insultCount:0,
     hackCooldown:false,
@@ -57,15 +57,25 @@ let memory = {
     level: parseInt(localStorage.getItem("level"))||1,
     roast: localStorage.getItem("roast")==="true",
     userName: localStorage.getItem("userName")||null,
-    mathHistory: JSON.parse(localStorage.getItem("mathHistory"))||[]
+    mathHistory: JSON.parse(localStorage.getItem("mathHistory"))||[],
+
+    // 👇 ADD THESE TWO LINES HERE
+    facts: JSON.parse(localStorage.getItem("facts")) || { likes:[], dislikes:[], favorites:{} },
+    conversationCount: parseInt(localStorage.getItem("conversationCount")) || 0
 };
 
+//not tested 
 function saveMemory() {
     localStorage.setItem("xp",memory.xp);
     localStorage.setItem("level",memory.level);
     localStorage.setItem("roast",memory.roast);
     localStorage.setItem("userName",memory.userName);
     localStorage.setItem("mathHistory",JSON.stringify(memory.mathHistory));
+
+    // 👇 NEW LINES
+    localStorage.setItem("facts",JSON.stringify(memory.facts));
+    localStorage.setItem("conversationCount",memory.conversationCount);
+
     updateUI();
 }
 
@@ -74,6 +84,77 @@ function updateUI(){
     document.getElementById("level").innerText=memory.level;
     document.getElementById("roast").innerText=memory.roast?"On":"Off";
     document.getElementById("name").innerText=memory.userName||"Unknown";
+}
+function smartMemory(input){
+    let lower = input.toLowerCase();
+
+    // LIKE MEMORY
+    if(lower.startsWith("i like ")){
+        let thing = lower.replace("i like ","").trim();
+        if(!memory.facts.likes.includes(thing)){
+            memory.facts.likes.push(thing);
+            addMessage("Noted. You like "+thing+". Riveting.","bot");
+            saveMemory();
+        }
+        return true;
+    }
+
+    // DISLIKE MEMORY
+    if(lower.startsWith("i hate ") || lower.startsWith("i dislike ")){
+        let thing = lower.replace("i hate ","").replace("i dislike ","").trim();
+        if(!memory.facts.dislikes.includes(thing)){
+            memory.facts.dislikes.push(thing);
+            addMessage("So you dislike "+thing+". I'll pretend that's useful.","bot");
+            saveMemory();
+        }
+        return true;
+    }
+
+    // FAVORITE MEMORY
+    if(lower.startsWith("my favorite ")){
+        let parts = lower.replace("my favorite ","").split(" is ");
+        if(parts.length === 2){
+            let category = parts[0].trim();
+            let value = parts[1].trim();
+            memory.facts.favorites[category] = value;
+            addMessage("Favorite "+category+" registered as "+value+". Thrilling.","bot");
+            saveMemory();
+            return true;
+        }
+    }
+
+    // RECALL LIKES
+    if(lower === "what do i like"){
+        if(memory.facts.likes.length){
+            addMessage("You like: "+memory.facts.likes.join(", "),"bot");
+        } else {
+            addMessage("You haven't told me what you like.","bot");
+        }
+        return true;
+    }
+
+    // RECALL DISLIKES
+    if(lower === "what do i hate" || lower === "what do i dislike"){
+        if(memory.facts.dislikes.length){
+            addMessage("You dislike: "+memory.facts.dislikes.join(", "),"bot");
+        } else {
+            addMessage("You haven't told me what you dislike.","bot");
+        }
+        return true;
+    }
+
+    // RECALL FAVORITES
+    if(lower.startsWith("what is my favorite ")){
+        let category = lower.replace("what is my favorite ","").trim();
+        if(memory.facts.favorites[category]){
+            addMessage("Your favorite "+category+" is "+memory.facts.favorites[category]+".","bot");
+        } else {
+            addMessage("You never told me your favorite "+category+".","bot");
+        }
+        return true;
+    }
+
+    return false;
 }
 
 // ==== CHAT MESSAGE ====
@@ -173,6 +254,10 @@ function sendMessage(){
     inputField.value="";
 
     let lower=input.toLowerCase();
+ //idk if next part works
+  memory.conversationCount++;
+if(smartMemory(input)) return;
+
 
     // CLEAR DATA
     if(lower==="/clearuserdata"){
@@ -251,15 +336,21 @@ function sendMessage(){
     }
 
     // DEFAULT LAZY RESPONSE
-    const normal=["Alright.","Sure.","I guess.","Noted.","Okay."];
-    const roast=["That was unimpressive.","You tried.","I expected nothing and still feel let down.","Bold choice."];
-    let pool=memory.roast?roast:normal;
-    addMessage(pool[Math.floor(Math.random()*pool.length)],"bot");
 
-    // XP SYSTEM
-    memory.xp+=5;
-    if(memory.xp>=memory.level*75) memory.level++;
-    saveMemory();
+// 👇 Smart memory random reference (10% chance)
+if(memory.facts.likes.length && Math.random() < 0.1){
+    let randomLike = memory.facts.likes[
+        Math.floor(Math.random()*memory.facts.likes.length)
+    ];
+    addMessage("You know, for someone who likes "+randomLike+", that was disappointing.","bot");
+    return;
+}
+
+const normal=["Alright.","Sure.","I guess.","Noted.","Okay."];
+const roast=["That was unimpressive.","You tried.","I expected nothing and still feel let down.","Bold choice."];
+let pool=memory.roast?roast:normal;
+addMessage(pool[Math.floor(Math.random()*pool.length)],"bot");
+
 }
 
 // ==== INIT ====
@@ -269,5 +360,6 @@ updateUI();
 
 </body>
 </html>
+
 
 
