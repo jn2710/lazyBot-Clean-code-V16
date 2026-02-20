@@ -158,21 +158,24 @@ function smartMemory(input){
 }
 
 // ==== CHAT MESSAGE ====// with delay?
-function addMessage(text,sender){
-    let div=document.createElement("div");
-    div.className="message "+sender;
+// ==== CHAT MESSAGE (SPACE-SAFE TYPING FIX) ==== what the fuck!?
+function addMessage(text, sender){
+    let div = document.createElement("div");
+    div.className = "message " + sender;
     document.getElementById("messages").appendChild(div);
 
-    let prefix = sender==="bot" ? "LazyBot: " : "You: ";
+    let prefix = sender === "bot" ? "LazyBot: " : "You: ";
     let fullText = prefix + text;
 
     if(sender !== "bot"){
-        div.innerText = fullText;
+        div.textContent = fullText;
     } else {
+        div.textContent = ""; // important: reset once // huh?
+
         let i = 0;
         function type(){
             if(i < fullText.length){
-                div.innerText += fullText.charAt(i);
+                div.textContent = fullText.slice(0, i + 1); 
                 i++;
                 setTimeout(type, 20);
             }
@@ -389,6 +392,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
