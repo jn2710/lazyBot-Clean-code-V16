@@ -157,15 +157,32 @@ function smartMemory(input){
     return false;
 }
 
-// ==== CHAT MESSAGE ====
+// ==== CHAT MESSAGE ====// with delay?
 function addMessage(text,sender){
     let div=document.createElement("div");
     div.className="message "+sender;
-    div.innerText=(sender==="bot"?"LazyBot: ":"You: ")+text;
     document.getElementById("messages").appendChild(div);
-    document.getElementById("messages").scrollTop=document.getElementById("messages").scrollHeight;
-}
 
+    let prefix = sender==="bot" ? "LazyBot: " : "You: ";
+    let fullText = prefix + text;
+
+    if(sender !== "bot"){
+        div.innerText = fullText;
+    } else {
+        let i = 0;
+        function type(){
+            if(i < fullText.length){
+                div.innerText += fullText.charAt(i);
+                i++;
+                setTimeout(type, 20);
+            }
+        }
+        type();
+    }
+
+    document.getElementById("messages").scrollTop =
+        document.getElementById("messages").scrollHeight;
+}
 // ==== LEVEL SYSTEM ====
 function levelCheck(){
     if(memory.xp >= memory.level*75){
@@ -259,14 +276,26 @@ function sendMessage(){
 if(smartMemory(input)) return;
 
 
+    // CLEAR DATA still new not tested in patch 2 dont try to fix its not worth it)
     // CLEAR DATA
-    if(lower==="/clearuserdata"){
-        memory={insultCount:0,hackCooldown:false,mood:0,xp:0,level:1,roast:false,userName:null,mathHistory:[]};
-        localStorage.clear();
-        addMessage("User data wiped. I forgot everything.","bot");
-        updateUI();
-        return;
-    }
+if(lower==="/clearuserdata"){
+    memory={
+        insultCount:0,
+        hackCooldown:false,
+        mood:0,
+        xp:0,
+        level:1,
+        roast:false,
+        userName:null,
+        mathHistory:[],
+        facts:{likes:[],dislikes:[],favorites:{}},
+        conversationCount:0
+    };
+    localStorage.clear();
+    addMessage("User data wiped. I forgot everything.","bot");
+    updateUI();
+    return;
+}
 
     // COLIN OVERRIDE
     if(lower.includes("colin")){
@@ -360,6 +389,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
