@@ -158,7 +158,7 @@ function smartMemory(input){
 }
 
 // ==== CHAT MESSAGE ====// with delay?
-// ==== CHAT MESSAGE (SPACE-SAFE TYPING FIX) ==== what the fuck!?
+// what the fuck!?
 function addMessage(text, sender){
     let div = document.createElement("div");
     div.className = "message " + sender;
@@ -187,12 +187,16 @@ function addMessage(text, sender){
         document.getElementById("messages").scrollHeight;
 }
 // ==== LEVEL SYSTEM ====
+// ==== LEVEL SYSTEM ====
 function levelCheck(){
-    if(memory.xp >= memory.level*75){
+    if(memory.xp >= memory.level * 75){
         memory.level++;
-        addMessage("You leveled up. Try not to let it change you.","bot");
+        memory.xp = 0; // reset XP after level up
+        addMessage("Level up detected. Congratulations on doing the bare minimum.","bot");
+        saveMemory();
     }
 }
+
 
 // ==== MATH PARSER ====
 function parseMath(input){
@@ -392,6 +396,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
