@@ -6,21 +6,34 @@
 <style>
 body {
   margin:0;
-  font-family:Arial, sans-serif;
-  background:#36393f;
-  color:#dcddde;
+  font-family: 'Courier New', monospace;
+  background:#0b0f0c;
+  color:#4cff4c;
   display:flex;
 }
+
 .sidebar {
-  width:220px;
-  background:#2f3136;
+  width:240px;
+  background:#111814;
   padding:15px;
+  border-right:2px solid #2aff2a;
 }
+
 .channel { padding:10px; font-weight:bold; background:#40444b; border-radius:5px; margin-bottom:10px;}
-.chat-area { flex:1; display:flex; flex-direction:column; }
+.chat-area {
+  flex:1;
+  display:flex;
+  flex-direction:column;
+  border:2px solid #2aff2a;
+  margin:10px;
+  box-shadow:0 0 15px rgba(0,255,0,0.2);
+}
 .messages { flex:1; padding:20px; overflow-y:auto; }
 .message { margin-bottom:12px; }
-.bot { color:#43b581; }
+  .bot  { 
+  color:#43b581; 
+  text-shadow:0 0 6px rgba(67,181,129,0.6);
+}
 .user { color:#00b0f4; }
 .input-area { display:flex; background:#40444b; padding:10px; }
 input { flex:1; padding:8px; border:none; border-radius:5px; background:#2f3136; color:white; outline:none; }
@@ -59,12 +72,12 @@ let memory = {
     userName: localStorage.getItem("userName")||null,
     mathHistory: JSON.parse(localStorage.getItem("mathHistory"))||[],
 
-    // 👇 ADD THESE TWO LINES HERE
+    // randomhotfix#2
     facts: JSON.parse(localStorage.getItem("facts")) || { likes:[], dislikes:[], favorites:{} },
     conversationCount: parseInt(localStorage.getItem("conversationCount")) || 0
 };
 
-//not tested 
+//not sure if this actully works?
 function saveMemory() {
     localStorage.setItem("xp",memory.xp);
     localStorage.setItem("level",memory.level);
@@ -187,7 +200,6 @@ function addMessage(text, sender){
         document.getElementById("messages").scrollHeight;
 }
 // ==== LEVEL SYSTEM ====
-// ==== LEVEL SYSTEM ====
 function levelCheck(){
     if(memory.xp >= memory.level * 75){
         memory.level++;
@@ -276,12 +288,30 @@ function sendMessage(){
     if(!input) return;
     addMessage(input,"user");
     inputField.value="";
+let lower=input.toLowerCase();
 
-    let lower=input.toLowerCase();
+// moodybot
+if(detectInsult(lower)){
+    memory.mood -= 2;
+} else {
+    memory.mood += 1;
+}
+
+if(memory.mood > 10) memory.mood = 10;
+if(memory.mood < -10) memory.mood = -10;
+
+memory.conversationCount++;
+  saveMemory();
+
  //idk if next part works
-  memory.conversationCount++;
-if(smartMemory(input)) return;
+ memory.conversationCount++;
 
+// xpgainv2
+memory.xp += 5;
+levelCheck();
+saveMemory();
+
+if(smartMemory(input)) return;
 
     // CLEAR DATA still new not tested in patch 2 dont try to fix its not worth it)
     // CLEAR DATA
@@ -373,7 +403,7 @@ if(lower==="/clearuserdata"){
 
     // DEFAULT LAZY RESPONSE
 
-// 👇 Smart memory random reference (10% chance)
+//  (10% chance) refrence
 if(memory.facts.likes.length && Math.random() < 0.1){
     let randomLike = memory.facts.likes[
         Math.floor(Math.random()*memory.facts.likes.length)
@@ -390,15 +420,11 @@ addMessage(pool[Math.floor(Math.random()*pool.length)],"bot");
 }
 
 // ==== INIT ====
-addMessage("LazyBot Ultimate online. Ready to be lazy.","bot");
+addMessage("LazyBot Ultimate online. !dev:null:guest","bot");
 updateUI();
 </script>
 
 </body>
 </html>
-
-
-
-
 
 
