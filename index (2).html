@@ -4,42 +4,142 @@
 <meta charset="UTF-8">
 <title>LazyBot Ultimate</title>
 <style>
+/* ===== BASE ===== */
 body {
-  margin:0;
-  font-family: 'Courier New', monospace;
-  background:#0b0f0c;
-  color:#4cff4c;
-  display:flex;
+  margin: 0;
+  font-family: "gg sans", "Segoe UI", Helvetica, Arial, sans-serif;
+  background: #1e1f22;
+  color: #dbdee1;
+  display: flex;
+  height: 100vh;
 }
 
+/* ===== SIDEBAR ===== */
 .sidebar {
-  width:240px;
-  background:#111814;
-  padding:15px;
-  border-right:2px solid #2aff2a;
+  width: 240px;
+  background: #2b2d31;
+  padding: 16px;
+  border-right: 1px solid #1a1b1e;
+  box-shadow: 0 0 20px rgba(88, 101, 242, 0.08);
 }
 
-.channel { padding:10px; font-weight:bold; background:#40444b; border-radius:5px; margin-bottom:10px;}
+.channel {
+  padding: 10px 12px;
+  font-weight: 600;
+  background: #313338;
+  border-radius: 6px;
+  margin-bottom: 14px;
+  color: #c4c9ce;
+  transition: 0.2s;
+}
+
+.channel:hover {
+  background: #383a40;
+  color: white;
+  cursor: pointer;
+}
+
+/* ===== STATS ===== */
+.stat {
+  font-size: 13px;
+  margin-top: 8px;
+  color: #b5bac1;
+}
+
+/* ===== CHAT AREA ===== */
 .chat-area {
-  flex:1;
-  display:flex;
-  flex-direction:column;
-  border:2px solid #2aff2a;
-  margin:10px;
-  box-shadow:0 0 15px rgba(0,255,0,0.2);
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  background: #313338;
+  margin: 12px;
+  border-radius: 10px;
+  overflow: hidden;
+  box-shadow: 0 0 25px rgba(88, 101, 242, 0.15);
 }
-.messages { flex:1; padding:20px; overflow-y:auto; }
-.message { margin-bottom:12px; }
-  .bot  { 
-  color:#43b581; 
-  text-shadow:0 0 6px rgba(67,181,129,0.6);
+
+/* ===== MESSAGES ===== */
+.messages {
+  flex: 1;
+  padding: 20px;
+  overflow-y: auto;
 }
-.user { color:#00b0f4; }
-.input-area { display:flex; background:#40444b; padding:10px; }
-input { flex:1; padding:8px; border:none; border-radius:5px; background:#2f3136; color:white; outline:none; }
-button { margin-left:10px; padding:8px 12px; background:#5865f2; border:none; border-radius:5px; color:white; cursor:pointer;}
-button:hover { background:#4752c4; }
-.stat { font-size:14px; margin-top:8px;}
+
+.message {
+  margin-bottom: 14px;
+  line-height: 1.4;
+  font-size: 15px;
+  padding: 8px 12px;
+  border-radius: 8px;
+  max-width: 75%;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+/* USER MESSAGE */
+.user {
+  background: #404249;
+  align-self: flex-end;
+  color: #ffffff;
+  box-shadow: 0 0 8px rgba(88, 101, 242, 0.2);
+}
+
+/* BOT MESSAGE */
+.bot {
+  background: #2b2d31;
+  align-self: flex-start;
+  color: #c9cdf2;
+  box-shadow: 0 0 12px rgba(114, 137, 218, 0.25);
+  text-shadow: 0 0 6px rgba(114, 137, 218, 0.35);
+}
+
+/* ===== INPUT AREA ===== */
+.input-area {
+  display: flex;
+  padding: 14px;
+  background: #383a40;
+  border-top: 1px solid #1a1b1e;
+}
+
+input {
+  flex: 1;
+  padding: 10px 12px;
+  border: none;
+  border-radius: 8px;
+  background: #1e1f22;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  box-shadow: inset 0 0 0 1px #2b2d31;
+  transition: 0.2s;
+}
+
+input:focus {
+  box-shadow: 0 0 8px rgba(88, 101, 242, 0.6);
+}
+
+/* BUTTON */
+button {
+  margin-left: 10px;
+  padding: 10px 16px;
+  background: #5865f2;
+  border: none;
+  border-radius: 8px;
+  color: white;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+  box-shadow: 0 0 10px rgba(88, 101, 242, 0.4);
+}
+
+button:hover {
+  background: #4752c4;
+  box-shadow: 0 0 16px rgba(88, 101, 242, 0.6);
+}
 </style>
 </head>
 <body>
@@ -426,5 +526,6 @@ updateUI();
 
 </body>
 </html>
+
 
 
