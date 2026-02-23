@@ -140,6 +140,32 @@ button:hover {
   background: #4752c4;
   box-shadow: 0 0 16px rgba(88, 101, 242, 0.6);
 }
+
+  
+
+  body.roast-mode {
+    background: #1a0f12;
+  }
+
+  body.roast-mode .chat-area {
+    box-shadow: 0 0 30px rgba(255, 70, 70, 0.35);
+  }
+
+  body.roast-mode .bot {
+    color: #ff6b6b;
+    text-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
+    box-shadow: 0 0 14px rgba(255, 80, 80, 0.4);
+  }
+
+  body.roast-mode button {
+    background: #d83c3e;
+    box-shadow: 0 0 12px rgba(255, 60, 60, 0.5);
+  }
+
+  body.roast-mode button:hover {
+    background: #b22d2f;
+  }
+
 </style>
 </head>
 <body>
@@ -185,7 +211,7 @@ function saveMemory() {
     localStorage.setItem("userName",memory.userName);
     localStorage.setItem("mathHistory",JSON.stringify(memory.mathHistory));
 
-    // 👇 NEW LINES
+    //  NEW LINES
     localStorage.setItem("facts",JSON.stringify(memory.facts));
     localStorage.setItem("conversationCount",memory.conversationCount);
 
@@ -196,7 +222,10 @@ function updateUI(){
     document.getElementById("xp").innerText=memory.xp;
     document.getElementById("level").innerText=memory.level;
     document.getElementById("roast").innerText=memory.roast?"On":"Off";
-    document.getElementById("name").innerText=memory.userName||"Unknown";
+    document.getElementById("name").innerText=memory.userName || "Unknown";
+
+    // red toggle 
+    document.body.classList.toggle("roast-mode", memory.roast);
 }
 function smartMemory(input){
     let lower = input.toLowerCase();
@@ -526,6 +555,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
