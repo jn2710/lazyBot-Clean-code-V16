@@ -228,7 +228,7 @@ function updateUI() {
     // false/positive right state
     document.body.classList.toggle("roast-mode", memory.roast);
 }
-}
+
 function smartMemory(input){
     let lower = input.toLowerCase();
 
@@ -434,8 +434,6 @@ if(memory.mood < -10) memory.mood = -10;
 memory.conversationCount++;
   saveMemory();
 
- //idk if next part works
- memory.conversationCount++;
 
 // xpgainv2
 memory.xp += 5;
@@ -557,6 +555,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
