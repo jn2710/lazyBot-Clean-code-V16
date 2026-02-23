@@ -189,14 +189,15 @@ button:hover {
 <script>
 //==== memoryv2 ====
 let memory = {
-    insultCount:0,
-    hackCooldown:false,
-    mood:0,
-    xp: parseInt(localStorage.getItem("xp"))||0,
-    level: parseInt(localStorage.getItem("level"))||1,
-    roast: localStorage.getItem("roast")==="true",
-    userName: localStorage.getItem("userName")||null,
-    mathHistory: JSON.parse(localStorage.getItem("mathHistory"))||[],
+    insultCount: 0,
+    hackCooldown: false,
+    mood: 0,
+    xp: parseInt(localStorage.getItem("xp")) || 0,
+    level: parseInt(localStorage.getItem("level")) || 1,
+    roast: localStorage.getItem("roast") === "true" || false,  // Default to false (roast off)
+    userName: localStorage.getItem("userName") || null,
+    mathHistory: JSON.parse(localStorage.getItem("mathHistory")) || [],
+    // other memory values...
 
     // randomhotfix#2
     facts: JSON.parse(localStorage.getItem("facts")) || { likes:[], dislikes:[], favorites:{} },
@@ -218,14 +219,15 @@ function saveMemory() {
     updateUI();
 }
 
-function updateUI(){
-    document.getElementById("xp").innerText=memory.xp;
-    document.getElementById("level").innerText=memory.level;
-    document.getElementById("roast").innerText=memory.roast?"On":"Off";
-    document.getElementById("name").innerText=memory.userName || "Unknown";
+function updateUI() {
+    document.getElementById("xp").innerText = memory.xp;
+    document.getElementById("level").innerText = memory.level;
+    document.getElementById("roast").innerText = memory.roast ? "On" : "Off";
+    document.getElementById("name").innerText = memory.userName || "Unknown";
 
-    // red toggle 
+    // false/positive right state
     document.body.classList.toggle("roast-mode", memory.roast);
+}
 }
 function smartMemory(input){
     let lower = input.toLowerCase();
@@ -555,6 +557,7 @@ updateUI();
 
 </body>
 </html>
+
 
 
 
