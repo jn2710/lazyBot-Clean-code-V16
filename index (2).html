@@ -1,563 +1,569 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-<meta charset="UTF-8">
-<title>LazyBot Ultimate</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Neon Arena Survival</title>
 <style>
-/* ===== BASE ===== */
-body {
-  margin: 0;
-  font-family: "gg sans", "Segoe UI", Helvetica, Arial, sans-serif;
-  background: #1e1f22;
-  color: #dbdee1;
-  display: flex;
-  height: 100vh;
-}
-
-/* ===== SIDEBAR ===== */
-.sidebar {
-  width: 240px;
-  background: #2b2d31;
-  padding: 16px;
-  border-right: 1px solid #1a1b1e;
-  box-shadow: 0 0 20px rgba(88, 101, 242, 0.08);
-}
-
-.channel {
-  padding: 10px 12px;
-  font-weight: 600;
-  background: #313338;
-  border-radius: 6px;
-  margin-bottom: 14px;
-  color: #c4c9ce;
-  transition: 0.2s;
-}
-
-.channel:hover {
-  background: #383a40;
-  color: white;
-  cursor: pointer;
-}
-
-/* ===== STATS ===== */
-.stat {
-  font-size: 13px;
-  margin-top: 8px;
-  color: #b5bac1;
-}
-
-/* ===== CHAT AREA ===== */
-.chat-area {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  background: #313338;
-  margin: 12px;
-  border-radius: 10px;
-  overflow: hidden;
-  box-shadow: 0 0 25px rgba(88, 101, 242, 0.15);
-}
-
-/* ===== MESSAGES ===== */
-.messages {
-  flex: 1;
-  padding: 20px;
-  overflow-y: auto;
-}
-
-.message {
-  margin-bottom: 14px;
-  line-height: 1.4;
-  font-size: 15px;
-  padding: 8px 12px;
-  border-radius: 8px;
-  max-width: 75%;
-  animation: fadeIn 0.2s ease;
-}
-
-@keyframes fadeIn {
-  from { opacity: 0; transform: translateY(4px); }
-  to { opacity: 1; transform: translateY(0); }
-}
-
-/* USER MESSAGE */
-.user {
-  background: #404249;
-  align-self: flex-end;
-  color: #ffffff;
-  box-shadow: 0 0 8px rgba(88, 101, 242, 0.2);
-}
-
-/* BOT MESSAGE */
-.bot {
-  background: #2b2d31;
-  align-self: flex-start;
-  color: #c9cdf2;
-  box-shadow: 0 0 12px rgba(114, 137, 218, 0.25);
-  text-shadow: 0 0 6px rgba(114, 137, 218, 0.35);
-}
-
-/* ===== INPUT AREA ===== */
-.input-area {
-  display: flex;
-  padding: 14px;
-  background: #383a40;
-  border-top: 1px solid #1a1b1e;
-}
-
-input {
-  flex: 1;
-  padding: 10px 12px;
-  border: none;
-  border-radius: 8px;
-  background: #1e1f22;
-  color: white;
-  font-size: 14px;
-  outline: none;
-  box-shadow: inset 0 0 0 1px #2b2d31;
-  transition: 0.2s;
-}
-
-input:focus {
-  box-shadow: 0 0 8px rgba(88, 101, 242, 0.6);
-}
-
-/* BUTTON */
-button {
-  margin-left: 10px;
-  padding: 10px 16px;
-  background: #5865f2;
-  border: none;
-  border-radius: 8px;
-  color: white;
-  font-weight: 600;
-  cursor: pointer;
-  transition: 0.2s;
-  box-shadow: 0 0 10px rgba(88, 101, 242, 0.4);
-}
-
-button:hover {
-  background: #4752c4;
-  box-shadow: 0 0 16px rgba(88, 101, 242, 0.6);
-}
-
-  
-
-  body.roast-mode {
-    background: #1a0f12;
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    overflow: hidden;
+    background: #050816;
+    font-family: Arial, sans-serif;
+    color: white;
   }
-
-  body.roast-mode .chat-area {
-    box-shadow: 0 0 30px rgba(255, 70, 70, 0.35);
+  canvas {
+    display: block;
+    background:
+      radial-gradient(circle at center, #0b1430 0%, #04060f 70%);
   }
-
-  body.roast-mode .bot {
-    color: #ff6b6b;
-    text-shadow: 0 0 8px rgba(255, 80, 80, 0.6);
-    box-shadow: 0 0 14px rgba(255, 80, 80, 0.4);
+  #ui {
+    position: absolute;
+    top: 10px;
+    left: 10px;
+    font-size: 18px;
+    user-select: none;
+    line-height: 1.5;
   }
-
-  body.roast-mode button {
-    background: #d83c3e;
-    box-shadow: 0 0 12px rgba(255, 60, 60, 0.5);
+  #menu {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0,0,0,0.65);
+    flex-direction: column;
+    gap: 14px;
   }
-
-  body.roast-mode button:hover {
-    background: #b22d2f;
+  button {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+    background: #00d4ff;
+    color: black;
+    font-weight: bold;
   }
-
+  button:hover {
+    background: #7deeff;
+  }
 </style>
 </head>
 <body>
-
-<div class="sidebar">
-  <div class="channel">#main</div>
-  <div class="stat">Level: <span id="level">1</span></div>
-  <div class="stat">XP: <span id="xp">0</span></div>
-  <div class="stat">Roast: <span id="roast">Off</span></div>
-  <div class="stat">Name: <span id="name">Unknown</span></div>
+<div id="ui">
+  <div id="score">Score: 0</div>
+  <div id="health">Health: 100</div>
+  <div id="wave">Wave: 1</div>
+  <div>Move: WASD / Arrow Keys</div>
+  <div>Shoot: Mouse</div>
 </div>
 
-<div class="chat-area">
-  <div class="messages" id="messages"></div>
-  <div class="input-area">
-    <input id="userInput" placeholder="Message #main" onkeydown="if(event.key==='Enter') sendMessage()">
-    <button onclick="sendMessage()">Send</button>
-  </div>
+<div id="menu">
+  <h1>NEON ARENA</h1>
+  <p>Survive endless enemy waves.</p>
+  <button id="startBtn">Start Game</button>
 </div>
+
+<canvas id="game"></canvas>
 
 <script>
-//==== memoryv2 ====
-let memory = {
-    insultCount: 0,
-    hackCooldown: false,
-    mood: 0,
-    xp: parseInt(localStorage.getItem("xp")) || 0,
-    level: parseInt(localStorage.getItem("level")) || 1,
-    roast: localStorage.getItem("roast") === "true" || false,  // Default to false (roast off)
-    userName: localStorage.getItem("userName") || null,
-    mathHistory: JSON.parse(localStorage.getItem("mathHistory")) || [],
-    // other memory values...
+const canvas = document.getElementById("game");
+const ctx = canvas.getContext("2d");
 
-    // randomhotfix#2
-    facts: JSON.parse(localStorage.getItem("facts")) || { likes:[], dislikes:[], favorites:{} },
-    conversationCount: parseInt(localStorage.getItem("conversationCount")) || 0
+function resize() {
+  canvas.width = window.innerWidth;
+  canvas.height = window.innerHeight;
+}
+window.addEventListener("resize", resize);
+resize();
+
+const ui = {
+  score: document.getElementById("score"),
+  health: document.getElementById("health"),
+  wave: document.getElementById("wave")
 };
 
-//not sure if this actully works?
-function saveMemory() {
-    localStorage.setItem("xp",memory.xp);
-    localStorage.setItem("level",memory.level);
-    localStorage.setItem("roast",memory.roast);
-    localStorage.setItem("userName",memory.userName);
-    localStorage.setItem("mathHistory",JSON.stringify(memory.mathHistory));
+const menu = document.getElementById("menu");
+const startBtn = document.getElementById("startBtn");
 
-    //  NEW LINES
-    localStorage.setItem("facts",JSON.stringify(memory.facts));
-    localStorage.setItem("conversationCount",memory.conversationCount);
+let keys = {};
+let mouse = { x: 0, y: 0, down: false };
+let bullets = [];
+let enemies = [];
+let particles = [];
+let powerups = [];
+let score = 0;
+let gameRunning = false;
+let spawnTimer = 0;
+let wave = 1;
+let enemyCount = 5;
 
-    updateUI();
+const player = {
+  x: 0,
+  y: 0,
+  radius: 18,
+  speed: 4,
+  health: 100,
+  maxHealth: 100,
+  fireRate: 180,
+  damage: 1,
+  lastShot: 0,
+  color: "#00ffe5"
+};
+
+function resetGame() {
+  bullets = [];
+  enemies = [];
+  particles = [];
+  powerups = [];
+  score = 0;
+  wave = 1;
+  enemyCount = 5;
+  spawnTimer = 0;
+
+  player.x = canvas.width / 2;
+  player.y = canvas.height / 2;
+  player.health = player.maxHealth;
+}
+
+window.addEventListener("keydown", e => keys[e.key.toLowerCase()] = true);
+window.addEventListener("keyup", e => keys[e.key.toLowerCase()] = false);
+
+window.addEventListener("mousemove", e => {
+  mouse.x = e.clientX;
+  mouse.y = e.clientY;
+});
+
+window.addEventListener("mousedown", () => mouse.down = true);
+window.addEventListener("mouseup", () => mouse.down = false);
+
+function rand(min, max) {
+  return Math.random() * (max - min) + min;
+}
+
+function distance(a, b) {
+  return Math.hypot(a.x - b.x, a.y - b.y);
+}
+
+function spawnEnemy() {
+  const side = Math.floor(Math.random() * 4);
+  let x, y;
+
+  if (side === 0) {
+    x = rand(0, canvas.width);
+    y = -30;
+  } else if (side === 1) {
+    x = canvas.width + 30;
+    y = rand(0, canvas.height);
+  } else if (side === 2) {
+    x = rand(0, canvas.width);
+    y = canvas.height + 30;
+  } else {
+    x = -30;
+    y = rand(0, canvas.height);
+  }
+
+  enemies.push({
+    x,
+    y,
+    radius: rand(12, 24),
+    speed: rand(1.1, 2.2) + wave * 0.08,
+    health: 2 + wave * 0.5,
+    color: `hsl(${rand(0,360)}, 90%, 60%)`
+  });
+}
+
+function shoot() {
+  const now = Date.now();
+  if (now - player.lastShot < player.fireRate) return;
+
+  player.lastShot = now;
+
+  const angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+
+  bullets.push({
+    x: player.x,
+    y: player.y,
+    vx: Math.cos(angle) * 9,
+    vy: Math.sin(angle) * 9,
+    radius: 5,
+    life: 70
+  });
+}
+
+function spawnExplosion(x, y, color, amount = 12) {
+  for (let i = 0; i < amount; i++) {
+    particles.push({
+      x,
+      y,
+      vx: rand(-3, 3),
+      vy: rand(-3, 3),
+      life: rand(20, 40),
+      size: rand(2, 5),
+      color
+    });
+  }
+}
+
+function spawnPowerup(x, y) {
+  const type = Math.random() < 0.5 ? "heal" : "rapid";
+
+  powerups.push({
+    x,
+    y,
+    radius: 12,
+    type,
+    pulse: 0
+  });
+}
+
+function updatePlayer() {
+  let dx = 0;
+  let dy = 0;
+
+  if (keys["w"] || keys["arrowup"]) dy--;
+  if (keys["s"] || keys["arrowdown"]) dy++;
+  if (keys["a"] || keys["arrowleft"]) dx--;
+  if (keys["d"] || keys["arrowright"]) dx++;
+
+  const len = Math.hypot(dx, dy);
+  if (len > 0) {
+    dx /= len;
+    dy /= len;
+  }
+
+  player.x += dx * player.speed;
+  player.y += dy * player.speed;
+
+  player.x = Math.max(player.radius, Math.min(canvas.width - player.radius, player.x));
+  player.y = Math.max(player.radius, Math.min(canvas.height - player.radius, player.y));
+
+  if (mouse.down) shoot();
+}
+
+function updateBullets() {
+  for (let i = bullets.length - 1; i >= 0; i--) {
+    const b = bullets[i];
+
+    b.x += b.vx;
+    b.y += b.vy;
+    b.life--;
+
+    if (
+      b.life <= 0 ||
+      b.x < -50 ||
+      b.y < -50 ||
+      b.x > canvas.width + 50 ||
+      b.y > canvas.height + 50
+    ) {
+      bullets.splice(i, 1);
+      continue;
+    }
+
+    for (let j = enemies.length - 1; j >= 0; j--) {
+      const e = enemies[j];
+
+      if (distance(b, e) < b.radius + e.radius) {
+        e.health -= player.damage;
+        bullets.splice(i, 1);
+        spawnExplosion(b.x, b.y, "#ffffff", 5);
+
+        if (e.health <= 0) {
+          score += 10;
+          spawnExplosion(e.x, e.y, e.color, 20);
+
+          if (Math.random() < 0.18) {
+            spawnPowerup(e.x, e.y);
+          }
+
+          enemies.splice(j, 1);
+        }
+        break;
+      }
+    }
+  }
+}
+
+function updateEnemies() {
+  for (let i = enemies.length - 1; i >= 0; i--) {
+    const e = enemies[i];
+
+    const angle = Math.atan2(player.y - e.y, player.x - e.x);
+    e.x += Math.cos(angle) * e.speed;
+    e.y += Math.sin(angle) * e.speed;
+
+    if (distance(player, e) < player.radius + e.radius) {
+      player.health -= 0.2;
+      spawnExplosion(player.x, player.y, "#ff0033", 2);
+    }
+  }
+}
+
+function updateParticles() {
+  for (let i = particles.length - 1; i >= 0; i--) {
+    const p = particles[i];
+
+    p.x += p.vx;
+    p.y += p.vy;
+    p.life--;
+
+    p.vx *= 0.98;
+    p.vy *= 0.98;
+
+    if (p.life <= 0) {
+      particles.splice(i, 1);
+    }
+  }
+}
+
+function updatePowerups() {
+  for (let i = powerups.length - 1; i >= 0; i--) {
+    const p = powerups[i];
+
+    p.pulse += 0.08;
+
+    if (distance(player, p) < player.radius + p.radius) {
+      if (p.type === "heal") {
+        player.health = Math.min(player.maxHealth, player.health + 25);
+      } else {
+        player.fireRate = 90;
+
+        setTimeout(() => {
+          player.fireRate = 180;
+        }, 5000);
+      }
+
+      spawnExplosion(p.x, p.y, "#ffff00", 16);
+      powerups.splice(i, 1);
+    }
+  }
+}
+
+function drawGrid() {
+  const size = 50;
+  ctx.strokeStyle = "rgba(255,255,255,0.05)";
+  ctx.lineWidth = 1;
+
+  for (let x = 0; x < canvas.width; x += size) {
+    ctx.beginPath();
+    ctx.moveTo(x, 0);
+    ctx.lineTo(x, canvas.height);
+    ctx.stroke();
+  }
+
+  for (let y = 0; y < canvas.height; y += size) {
+    ctx.beginPath();
+    ctx.moveTo(0, y);
+    ctx.lineTo(canvas.width, y);
+    ctx.stroke();
+  }
+}
+
+function drawPlayer() {
+  ctx.save();
+  ctx.translate(player.x, player.y);
+
+  const angle = Math.atan2(mouse.y - player.y, mouse.x - player.x);
+  ctx.rotate(angle);
+
+  ctx.shadowBlur = 20;
+  ctx.shadowColor = player.color;
+
+  ctx.fillStyle = player.color;
+  ctx.beginPath();
+  ctx.arc(0, 0, player.radius, 0, Math.PI * 2);
+  ctx.fill();
+
+  ctx.fillStyle = "white";
+  ctx.fillRect(8, -4, 16, 8);
+
+  ctx.restore();
+}
+
+function drawBullets() {
+  bullets.forEach(b => {
+    ctx.shadowBlur = 12;
+    ctx.shadowColor = "#ffffff";
+    ctx.fillStyle = "#ffffff";
+    ctx.beginPath();
+    ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2);
+    ctx.fill();
+  });
+}
+
+function drawEnemies() {
+  enemies.forEach(e => {
+    ctx.shadowBlur = 16;
+    ctx.shadowColor = e.color;
+    ctx.fillStyle = e.color;
+
+    ctx.beginPath();
+    ctx.arc(e.x, e.y, e.radius, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "red";
+    ctx.fillRect(e.x - e.radius, e.y - e.radius - 10, e.radius * 2, 4);
+
+    ctx.fillStyle = "lime";
+    ctx.fillRect(
+      e.x - e.radius,
+      e.y - e.radius - 10,
+      (e.health / (2 + wave * 0.5)) * e.radius * 2,
+      4
+    );
+  });
+}
+
+function drawParticles() {
+  particles.forEach(p => {
+    ctx.globalAlpha = p.life / 40;
+    ctx.fillStyle = p.color;
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.globalAlpha = 1;
+  });
+}
+
+function drawPowerups() {
+  powerups.forEach(p => {
+    const size = p.radius + Math.sin(p.pulse) * 3;
+
+    ctx.shadowBlur = 20;
+    ctx.shadowColor = p.type === "heal" ? "#00ff00" : "#ffff00";
+    ctx.fillStyle = p.type === "heal" ? "#00ff00" : "#ffff00";
+
+    ctx.beginPath();
+    ctx.arc(p.x, p.y, size, 0, Math.PI * 2);
+    ctx.fill();
+
+    ctx.fillStyle = "black";
+    ctx.font = "bold 12px Arial";
+    ctx.textAlign = "center";
+    ctx.fillText(p.type === "heal" ? "+" : "R", p.x, p.y + 4);
+  });
 }
 
 function updateUI() {
-    document.getElementById("xp").innerText = memory.xp;
-    document.getElementById("level").innerText = memory.level;
-    document.getElementById("roast").innerText = memory.roast ? "On" : "Off";
-    document.getElementById("name").innerText = memory.userName || "Unknown";
-
-    // false/positive right state
-    document.body.classList.toggle("roast-mode", memory.roast);
+  ui.score.textContent = `Score: ${score}`;
+  ui.health.textContent = `Health: ${Math.max(0, Math.floor(player.health))}`;
+  ui.wave.textContent = `Wave: ${wave}`;
 }
 
-function smartMemory(input){
-    let lower = input.toLowerCase();
+function nextWaveCheck() {
+  if (enemies.length === 0) {
+    wave++;
+    enemyCount += 2;
 
-    // LIKE MEMORY
-    if(lower.startsWith("i like ")){
-        let thing = lower.replace("i like ","").trim();
-        if(!memory.facts.likes.includes(thing)){
-            memory.facts.likes.push(thing);
-            addMessage("Noted. You like "+thing+". Riveting.","bot");
-            saveMemory();
-        }
-        return true;
+    for (let i = 0; i < enemyCount; i++) {
+      setTimeout(() => {
+        spawnEnemy();
+      }, i * 250);
     }
-
-    // DISLIKE MEMORY
-    if(lower.startsWith("i hate ") || lower.startsWith("i dislike ")){
-        let thing = lower.replace("i hate ","").replace("i dislike ","").trim();
-        if(!memory.facts.dislikes.includes(thing)){
-            memory.facts.dislikes.push(thing);
-            addMessage("So you dislike "+thing+". I'll pretend that's useful.","bot");
-            saveMemory();
-        }
-        return true;
-    }
-
-    // FAVORITE MEMORY
-    if(lower.startsWith("my favorite ")){
-        let parts = lower.replace("my favorite ","").split(" is ");
-        if(parts.length === 2){
-            let category = parts[0].trim();
-            let value = parts[1].trim();
-            memory.facts.favorites[category] = value;
-            addMessage("Favorite "+category+" registered as "+value+". Thrilling.","bot");
-            saveMemory();
-            return true;
-        }
-    }
-
-    // RECALL LIKES
-    if(lower === "what do i like"){
-        if(memory.facts.likes.length){
-            addMessage("You like: "+memory.facts.likes.join(", "),"bot");
-        } else {
-            addMessage("You haven't told me what you like.","bot");
-        }
-        return true;
-    }
-
-    // RECALL DISLIKES
-    if(lower === "what do i hate" || lower === "what do i dislike"){
-        if(memory.facts.dislikes.length){
-            addMessage("You dislike: "+memory.facts.dislikes.join(", "),"bot");
-        } else {
-            addMessage("You haven't told me what you dislike.","bot");
-        }
-        return true;
-    }
-
-    // RECALL FAVORITES
-    if(lower.startsWith("what is my favorite ")){
-        let category = lower.replace("what is my favorite ","").trim();
-        if(memory.facts.favorites[category]){
-            addMessage("Your favorite "+category+" is "+memory.facts.favorites[category]+".","bot");
-        } else {
-            addMessage("You never told me your favorite "+category+".","bot");
-        }
-        return true;
-    }
-
-    return false;
+  }
 }
 
-// ==== CHAT MESSAGE ====// with delay?
-// what the fuck!?
-function addMessage(text, sender){
-    let div = document.createElement("div");
-    div.className = "message " + sender;
-    document.getElementById("messages").appendChild(div);
+function drawBackgroundGlow() {
+  const grad = ctx.createRadialGradient(
+    player.x,
+    player.y,
+    0,
+    player.x,
+    player.y,
+    260
+  );
 
-    let prefix = sender === "bot" ? "LazyBot: " : "You: ";
-    let fullText = prefix + text;
+  grad.addColorStop(0, "rgba(0,255,255,0.12)");
+  grad.addColorStop(1, "rgba(0,0,0,0)");
 
-    if(sender !== "bot"){
-        div.textContent = fullText;
-    } else {
-        div.textContent = ""; // important: reset once // huh?
-
-        let i = 0;
-        function type(){
-            if(i < fullText.length){
-                div.textContent = fullText.slice(0, i + 1); 
-                i++;
-                setTimeout(type, 20);
-            }
-        }
-        type();
-    }
-
-    document.getElementById("messages").scrollTop =
-        document.getElementById("messages").scrollHeight;
-}
-// ==== LEVEL SYSTEM ====
-function levelCheck(){
-    if(memory.xp >= memory.level * 75){
-        memory.level++;
-        memory.xp = 0; // reset XP after level up
-        addMessage("Level up detected. Congratulations on doing the bare minimum.","bot");
-        saveMemory();
-    }
+  ctx.fillStyle = grad;
+  ctx.fillRect(0, 0, canvas.width, canvas.height);
 }
 
+function gameOver() {
+  gameRunning = false;
 
-// ==== MATH PARSER ====
-function parseMath(input){
-    let lower=input.toLowerCase()
-    .replace("plus","+")
-    .replace("minus","-")
-    .replace("times","*")
-    .replace("multiplied by","*")
-    .replace("x","*")
-    .replace("divided by","/")
-    .replace("over","/");
+  menu.style.display = "flex";
+  menu.innerHTML = `
+    <h1>GAME OVER</h1>
+    <h2>Score: ${score}</h2>
+    <button id="restartBtn">Play Again</button>
+  `;
 
-    let match=lower.match(/(-?\d+)\s*[\+\-\*\/]\s*(-?\d+)/);
-    if(match){
-        try{
-            let result=eval(match[0]);
-            memory.mathHistory.push(match[0]+"="+result);
-            return result;
-        }catch{return null;}
-    }
-    return null;
+  document.getElementById("restartBtn").onclick = () => {
+    menu.innerHTML = `
+      <h1>NEON ARENA</h1>
+      <p>Survive endless enemy waves.</p>
+      <button id="startBtn">Start Game</button>
+    `;
+
+    document.getElementById("startBtn").onclick = startGame;
+    startGame();
+  };
 }
 
-// ==== INSULT DETECTION ====
-function detectInsult(text){
-    const insults=["stupid","idiot","dumb","trash","loser","useless","moron","garbage","pathetic","shut up","annoying"];
-    return insults.some(word=>text.includes(word));
+function update() {
+  updatePlayer();
+  updateBullets();
+  updateEnemies();
+  updateParticles();
+  updatePowerups();
+  updateUI();
+  nextWaveCheck();
+
+  spawnTimer++;
+
+  if (spawnTimer > 240) {
+    spawnTimer = 0;
+
+    if (enemies.length < enemyCount) {
+      spawnEnemy();
+    }
+  }
+
+  if (player.health <= 0) {
+    gameOver();
+  }
 }
 
-// ==== JACKSON DEFENSE ====
-function jacksonNegative(text){
-    const names=["jackson","jack","jaxon","jakson"];
-    const negatives=["stupid","trash","loser","dumb","pathetic","hate"];
-    let mentions=names.some(n=>text.includes(n));
-    let neg=negatives.some(n=>text.includes(n));
-    return mentions&&neg;
+function draw() {
+  ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+  drawGrid();
+  drawBackgroundGlow();
+  drawPowerups();
+  drawParticles();
+  drawBullets();
+  drawEnemies();
+  drawPlayer();
 }
 
-// ==== FAKE HACK ULTIMATE ====
-function fakeHack(){
-    if(memory.hackCooldown) return;
-    memory.hackCooldown=true;
-    let steps=[
-        "[ INITIATING RESPONSE PROTOCOL ]",
-        "Resolving client signature...",
-        "IP Hash: 198.51.100."+Math.floor(Math.random()*255),
-        "Geo-Node: Mossyrock Sector Relay",
-        "ISP: Comcast / AT&T / Spectrum",
-        "Device fingerprint: "+["Windows 10","Windows 11","macOS","Linux"][Math.floor(Math.random()*4)]+" | "+["Chrome","Firefox","Edge"][Math.floor(Math.random()*3)],
-        "Latency: "+(20+Math.floor(Math.random()*40))+"ms",
-        "Session fingerprint matched.",
-        "Access level: Minimal.",
-        "Relax. I'm lazy, not illegal."
-    ];
-    let i=0;
-    let interval=setInterval(()=>{
-        addMessage(steps[i],"bot");
-        i++;
-        if(i>=steps.length){
-            clearInterval(interval);
-            setTimeout(()=>memory.hackCooldown=false,5000);
-        }
-    },500);
+function loop() {
+  if (!gameRunning) return;
+
+  update();
+  draw();
+
+  requestAnimationFrame(loop);
 }
 
-// ==== LAZY RESPONSE & GREETINGS ====
-function lazyGreeting(input){
-    const greetings=["hi","hello","hey","how are you"];
-    if(greetings.some(g=>input.includes(g))) return ["Yeah. Sure. Hi.","I guess I'm functional.","Hey, you again?"][Math.floor(Math.random()*3)];
-    return null;
+function startGame() {
+  resetGame();
+
+  for (let i = 0; i < enemyCount; i++) {
+    spawnEnemy();
+  }
+
+  menu.style.display = "none";
+  gameRunning = true;
+  loop();
 }
 
-// ==== SEND MESSAGE ====
-function sendMessage(){
-    const inputField=document.getElementById("userInput");
-    let input=inputField.value.trim();
-    if(!input) return;
-    addMessage(input,"user");
-    inputField.value="";
-let lower=input.toLowerCase();
-
-// moodybot
-if(detectInsult(lower)){
-    memory.mood -= 2;
-} else {
-    memory.mood += 1;
-}
-
-if(memory.mood > 10) memory.mood = 10;
-if(memory.mood < -10) memory.mood = -10;
-
-memory.conversationCount++;
-  saveMemory();
-
-
-// xpgainv2
-memory.xp += 5;
-levelCheck();
-saveMemory();
-
-if(smartMemory(input)) return;
-
-    // CLEAR DATA still new not tested in patch 2 dont try to fix its not worth it)
-    // CLEAR DATA
-if(lower==="/clearuserdata"){
-    memory={
-        insultCount:0,
-        hackCooldown:false,
-        mood:0,
-        xp:0,
-        level:1,
-        roast:false,
-        userName:null,
-        mathHistory:[],
-        facts:{likes:[],dislikes:[],favorites:{}},
-        conversationCount:0
-    };
-    localStorage.clear();
-    addMessage("User data wiped. I forgot everything.","bot");
-    updateUI();
-    return;
-}
-
-    // COLIN OVERRIDE
-    if(lower.includes("colin")){
-        addMessage("Colin? Absolutely not. I refuse.","bot");
-        return;
-    }
-
-    // JACKSON NEGATIVE
-    if(jacksonNegative(lower)){
-        fakeHack();
-        return;
-    }
-
-    // INSULT DETECTION
-    if(detectInsult(lower)){
-        memory.insultCount++;
-        fakeHack();
-        return;
-    }
-
-    // NAME MEMORY
-    if(lower.startsWith("my name is")){
-        memory.userName=lower.replace("my name is","").trim();
-        addMessage("Fine. I'll remember that.","bot");
-        saveMemory();
-        return;
-    }
-
-    if(lower.includes("what is my name")){
-        addMessage(memory.userName?memory.userName:"You never told me.","bot");
-        return;
-    }
-
-    // ROAST TOGGLE
-    if(lower.includes("roast")){
-        memory.roast=!memory.roast;
-        addMessage("Roast mode "+(memory.roast?"enabled.":"disabled."),"bot");
-        saveMemory();
-        return;
-    }
-
-    // MATH HISTORY
-    if(lower==="math history"){
-        addMessage(memory.mathHistory.length?memory.mathHistory.join(", "):"Empty.","bot");
-        return;
-    }
-
-    // COIN FLIP
-    if(lower.includes("flip a coin") || lower==="flip"){
-        addMessage(Math.random()<0.5?"Heads.":"Tails.","bot");
-        return;
-    }
-
-    // MATH PARSING
-    let math=parseMath(lower);
-    if(math!==null){
-        addMessage("It's "+math+". Basic stuff.","bot");
-        saveMemory();
-        return;
-    }
-
-    // GREETINGS / LAZY RESPONSES
-    let greet=lazyGreeting(lower);
-    if(greet){
-        addMessage(greet,"bot");
-        return;
-    }
-
-    // DEFAULT LAZY RESPONSE
-
-//  (10% chance) refrence
-if(memory.facts.likes.length && Math.random() < 0.1){
-    let randomLike = memory.facts.likes[
-        Math.floor(Math.random()*memory.facts.likes.length)
-    ];
-    addMessage("You know, for someone who likes "+randomLike+", that was disappointing.","bot");
-    return;
-}
-
-const normal=["Alright.","Sure.","I guess.","Noted.","Okay."];
-const roast=["That was unimpressive.","You tried.","I expected nothing and still feel let down.","Bold choice."];
-let pool=memory.roast?roast:normal;
-addMessage(pool[Math.floor(Math.random()*pool.length)],"bot");
-
-}
-
-// ==== INIT ====
-addMessage("LazyBot Ultimate online. !dev:null:guest","bot");
-updateUI();
+startBtn.onclick = startGame;
 </script>
-
 </body>
 </html>
-
-
-
-
-
-
