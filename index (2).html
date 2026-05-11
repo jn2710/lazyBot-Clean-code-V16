@@ -99,6 +99,7 @@ let gameRunning = false;
 let spawnTimer = 0;
 let wave = 1;
 let enemyCount = 5;
+ let screenShake = 0;
 
 const player = {
   x: 0,
@@ -110,6 +111,8 @@ const player = {
   fireRate: 180,
   damage: 1,
   lastShot: 0,
+ dashCooldown: 0,
+ dashSpeed: 14,
   color: "#00ffe5"
 };
 
@@ -233,6 +236,18 @@ function updatePlayer() {
     dx /= len;
     dy /= len;
   }
+ if (keys["shift"] && player.dashCooldown <= 0) {
+  player.x += dx * player.dashSpeed;
+  player.y += dy * player.dashSpeed;
+
+  player.dashCooldown = 60;
+
+  spawnExplosion(player.x, player.y, "#00ffff", 20);
+}
+
+if (player.dashCooldown > 0) {
+  player.dashCooldown--;
+}
 
   player.x += dx * player.speed;
   player.y += dy * player.speed;
@@ -271,6 +286,7 @@ function updateBullets() {
         spawnExplosion(b.x, b.y, "#ffffff", 5);
 
         if (e.health <= 0) {
+         screenShake = 10;
           score += 10;
           spawnExplosion(e.x, e.y, e.color, 20);
 
@@ -532,7 +548,16 @@ function update() {
 
 function draw() {
   ctx.clearRect(0, 0, canvas.width, canvas.height);
+ctx.save();
 
+if (screenShake > 0) {
+  ctx.translate(
+    rand(-screenShake, screenShake),
+    rand(-screenShake, screenShake)
+  );
+
+  screenShake *= 0.9;
+}
   drawGrid();
   drawBackgroundGlow();
   drawPowerups();
@@ -540,6 +565,8 @@ function draw() {
   drawBullets();
   drawEnemies();
   drawPlayer();
+
+ ctx.restore();
 }
 
 function loop() {
